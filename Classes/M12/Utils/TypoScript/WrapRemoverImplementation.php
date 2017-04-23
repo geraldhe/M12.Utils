@@ -8,12 +8,11 @@ namespace M12\Utils\TypoScript;
  * the terms of the GNU General Public License, either version 3 of the   *
  * License, or (at your option) any later version.                        *
  *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\TypoScript\Exception;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Fusion\Exception;
 
 /**
  * Implements WrapRemover
@@ -21,7 +20,6 @@ use TYPO3\TypoScript\Exception;
  * Removes extra NodeType wrapper, only when it contains its default class
  * (set in wrapperClass TypoScript variable).
  *
- * All TYPO3.Neos:Content elements need extra wrapper around, used mainly
  * in Neos back-end, where all extra data-* attributes needed for inline
  * editing are added. In the 'live' workspace though, it results with extra
  * DIV around the element, with its default class (eg. typo3-neos-nodetypes-*).
@@ -30,7 +28,7 @@ use TYPO3\TypoScript\Exception;
  * classes or other attributes were set. In such case we don't remove
  * the wrapper.
  */
-class WrapRemoverImplementation extends AbstractTypoScriptObject {
+class WrapRemoverImplementation extends AbstractFusionObject {
 
 	/**
 	 * The string to be processed
@@ -38,21 +36,21 @@ class WrapRemoverImplementation extends AbstractTypoScriptObject {
 	 * @return string
 	 */
 	public function getValue() {
-		return $this->tsValue('value');
+		return $this->fusionValue('value');
 	}
 
 	/**
 	 * @return NodeInterface
 	 */
 	public function getNode() {
-		return $this->tsValue('node');
+		return $this->fusionValue('node');
 	}
 
 	/**
 	 * @return NodeInterface
 	 */
 	public function getContentCollectionNode() {
-		$currentContext = $this->tsRuntime->getCurrentContext();
+		$currentContext = $this->runtime->getCurrentContext();
 		return $currentContext['node'];
 	}
 
@@ -84,11 +82,11 @@ class WrapRemoverImplementation extends AbstractTypoScriptObject {
 	 * This is rather dirty/temporary hack as it breaks the rule, that rendered markup
 	 * is the same in the Neos back-end and in the front-end.
 	 *
-	 * @throws \TYPO3\TypoScript\Exception
+	 * @throws \Neos\Fusion\Exception
 	 * @return string
 	 */
 	public function evaluate() {
-		if (!($wrapperClass = $this->tsValue('wrapperClass'))) {
+		if (!($wrapperClass = $this->fusionValue('wrapperClass'))) {
 			throw new Exception("Missing 'wrapperClass' property for WrapRemover.");
 		}
 
